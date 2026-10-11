@@ -1,0 +1,3 @@
+### Consultar pacientes a traves del Gateway
+GET http://localhost:8080/api/pacientes
+Accept: application/json

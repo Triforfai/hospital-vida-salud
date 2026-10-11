@@ -1,0 +1,31 @@
+### 1. Registrar un paciente ficticio
+POST http://localhost:8081/api/pacientes
+Content-Type: application/json
+
+{
+  "dni": "12345678",
+  "nombres": "Ana",
+  "apellidos": "Torres",
+  "fechaNacimiento": "1995-04-12",
+  "telefono": "900123456",
+  "correo": "ana.torres@example.com",
+  "direccion": "Lima"
+}
+
+### 2. Listar todos los pacientes
+GET http://localhost:8081/api/pacientes
+Accept: application/json
+
+### 3. Intentar registrar el mismo DNI
+POST http://localhost:8081/api/pacientes
+Content-Type: application/json
+
+{
+  "dni": "12345678",
+  "nombres": "Ana",
+  "apellidos": "Torres",
+  "fechaNacimiento": "1995-04-12",
+  "telefono": "900123456",
+  "correo": "ana.torres@example.com",
+  "direccion": "Lima"
+}

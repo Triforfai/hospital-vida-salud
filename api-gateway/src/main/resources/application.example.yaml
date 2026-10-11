@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: pacientes-service
+              uri: lb://PACIENTES-SERVICE
+              predicates:
+                - Path=/api/pacientes/**
+
+            - id: citas-service
+              uri: lb://CITAS-SERVICE
+              predicates:
+                - Path=/api/citas/**
+
+
+            - id: atenciones-service
+              uri: lb://ATENCIONES-SERVICE
+              predicates:
+                - Path=/api/atenciones/**
+
+
+            - id: laboratorio-service
+              uri: lb://LABORATORIO-SERVICE
+              predicates:
+                - Path=/api/laboratorio/**
+
+
+            - id: hospitalizacion-service
+              uri: lb://HOSPITALIZACION-SERVICE
+              predicates:
+                - Path=/api/hospitalizaciones/**
+
+
+            - id: farmacia-service
+              uri: lb://FARMACIA-SERVICE
+              predicates:
+                - Path=/api/farmacia/**
+
+            - id: facturacion-service
+              uri: lb://FACTURACION-SERVICE
+              predicates:
+                - Path=/api/facturacion/**
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true

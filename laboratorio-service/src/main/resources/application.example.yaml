@@ -1,0 +1,21 @@
+
+spring:
+  application:
+    name: laboratorio-service
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/hospital_pacientes
+    username: postgres
+    password: "${DB_PASSWORD:CHANGE_ME}"
+
+server:
+  port: 8086
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true

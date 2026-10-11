@@ -1,0 +1,25 @@
+﻿# Archivos compilados de Java y Maven
+**/target/
+**/.idea/
+**/.git/
+
+# Configuraciones locales que pueden contener contrasenas
+**/application.yml
+**/application.yaml
+**/application.properties
+**/application-*.yml
+**/application-*.yaml
+**/application-*.properties
+
+# Conservar archivos de configuracion de ejemplo
+!**/application.example.yml
+!**/application.example.yaml
+!**/application.example.properties
+
+# Archivos privados y credenciales
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
+**/*.p12
+**/*.jks
