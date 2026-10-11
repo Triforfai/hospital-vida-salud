@@ -1,0 +1,97 @@
+name: Hospital Vida Salud CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        service:
+          - eureka-server
+          - hospital-vida-salud
+          - api-gateway
+          - citas-service
+          - notificaciones-service
+          - auditoria-service
+          - atenciones-service
+          - laboratorio-service
+          - hospitalizacion-service
+          - farmacia-service
+          - facturacion-service
+
+    env:
+      DB_PASSWORD: ci-postgres-password
+      RABBITMQ_PASSWORD: ci-rabbit-password
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: hospital_pacientes
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-postgres-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d hospital_pacientes"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+      rabbitmq:
+        image: rabbitmq:4-management
+        env:
+          RABBITMQ_DEFAULT_USER: hospital
+          RABBITMQ_DEFAULT_PASS: ci-rabbit-password
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v7
+
+      - name: Configurar Java 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+          cache-dependency-path: ${{ matrix.service }}/pom.xml
+
+      - name: Preparar configuracion local de pruebas
+        working-directory: ${{ matrix.service }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f src/main/resources/application.example.yaml ]; then
+            cp src/main/resources/application.example.yaml src/main/resources/application.yaml
+          elif [ -f src/main/resources/application.example.yml ]; then
+            cp src/main/resources/application.example.yml src/main/resources/application.yml
+          elif [ -f src/main/resources/application.example.properties ]; then
+            cp src/main/resources/application.example.properties src/main/resources/application.properties
+          else
+            echo "No se encontro un archivo de configuracion de ejemplo."
+            exit 1
+          fi
+
+      - name: Compilar y ejecutar pruebas
+        working-directory: ${{ matrix.service }}
+        run: bash ./mvnw --batch-mode --no-transfer-progress verify
